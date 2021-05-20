@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.EOFException;
+import java.sql.*;
 
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
@@ -104,10 +105,9 @@ public class TelefonskiImenik {
         
         if (seznamKontaktov.size() == 0) {
             System.out.println();
-            System.out.println("V imeniku še ni nobenega kontakta. Dodajte kontakt in poskusite znova.");
+            System.out.println("V imeniku ni nobenega kontakta. Dodajte kontakt in poskusite znova.");
         } else {
             for (Kontakt kontakt : seznamKontaktov) {
-                System.out.println();
                 System.out.println(kontakt.toString());
             }
         }
@@ -128,7 +128,7 @@ public class TelefonskiImenik {
         String input = "";
 
         while(!preveri) {
-            input = sc.next();
+            input = sc.nextLine();
             try {
                 kontakt.setId(Integer.parseInt(input));
                 preveri = true;
@@ -138,19 +138,19 @@ public class TelefonskiImenik {
         }
 
         System.out.print("Vnesite ime: ");
-        kontakt.setIme(sc.next());
+        kontakt.setIme(sc.nextLine());
         System.out.print("Vnesite priimek: ");
-        kontakt.setPriimek(sc.next());
+        kontakt.setPriimek(sc.nextLine());
         System.out.print("Vnesite naslov: ");
-        kontakt.setNaslov(sc.next());
+        kontakt.setNaslov(sc.nextLine());
         System.out.print("Vnesite elektronsko pošto: ");
-        kontakt.setElektronskaPosta(sc.next());
+        kontakt.setElektronskaPosta(sc.nextLine());
         System.out.print("Vnesite telefon: ");
-        kontakt.setTelefon(sc.next());
+        kontakt.setTelefon(sc.nextLine());
         System.out.print("Vnesite mobilni telefon: ");
-        kontakt.setMobilniTelefon(sc.next());
+        kontakt.setMobilniTelefon(sc.nextLine());
         System.out.print("Vnesite opombo: ");
-        kontakt.setOpomba(sc.next());
+        kontakt.setOpomba(sc.nextLine());
 
         boolean zeObstaja = false;
 
@@ -193,7 +193,7 @@ public class TelefonskiImenik {
         System.out.print("Vnesite ID kontakta, ki ga želite spremeniti: ");
 
         while(!preveri) {
-            input = sc.next();
+            input = sc.nextLine();
             try {
                 tempID = Integer.parseInt(input);
                 preveri = true;
@@ -203,12 +203,12 @@ public class TelefonskiImenik {
             }
         }
 
-        //System.out.println("zelimo spremenit kontakt z id = " + tempID);
-
         boolean flag = false;
 
+        //TODO: popravi scanner za imena in ostale stringe
+
         while (!"99".equals(akcija)) {
-            akcija = sc.next();
+            akcija = sc.nextLine();
             Kontakt k;
 
             switch (akcija) {
@@ -220,44 +220,43 @@ public class TelefonskiImenik {
 
                 case "1":
                     System.out.println("Vpišite novo ime kontakta: ");
-                    input = sc.next();
+                    input = sc.nextLine();
                     k = poisciID(seznamKontaktov, tempID, input);
                     k.setIme(input);
-
                     break;
                 case "2":
                     System.out.println("Vpišite nov priimek kontakta: ");
-                    input = sc.next();
+                    input = sc.nextLine();
                     k = poisciID(seznamKontaktov, tempID, input);
                     k.setPriimek(input);
                     break;
                 case "3":
                     System.out.println("Vpišite nov naslov kontakta: ");
-                    input = sc.next();
+                    input = sc.nextLine();
                     k = poisciID(seznamKontaktov, tempID, input);
                     k.setNaslov(input);
                     break;
                 case "4":
                     System.out.println("Vpišite novo elektronsko pošto kontakta: ");
-                    input = sc.next();
+                    input = sc.nextLine();
                     k = poisciID(seznamKontaktov, tempID, input);
                     k.setElektronskaPosta(input);
                     break;
                 case "5":
                     System.out.println("Vpišite nov telefon kontakta: ");
-                    input = sc.next();
+                    input = sc.nextLine();
                     k = poisciID(seznamKontaktov, tempID, input);
                     k.setTelefon(input);
                     break;
                 case "6":
                     System.out.println("Vpišite nov mobilni telefon kontakta: ");
-                    input = sc.next();
+                    input = sc.nextLine();
                     k = poisciID(seznamKontaktov, tempID, input);
                     k.setMobilniTelefon(input);
                     break;
                 case "7":
                     System.out.println("Vpišite novo opombo kontakta: ");
-                    input = sc.next();
+                    input = sc.nextLine();
                     k = poisciID(seznamKontaktov, tempID, input);
                     k.setOpomba(input);
                     break;
@@ -288,7 +287,7 @@ public class TelefonskiImenik {
         int tempID = 0;
 
         while(!preveri) {
-            input = sc.next();
+            input = sc.nextLine();
             try {
                 tempID = Integer.parseInt(input);
                 preveri = true;
@@ -318,7 +317,7 @@ public class TelefonskiImenik {
         int tempID = 0;
 
         while(!preveri) {
-            input = sc.next();
+            input = sc.nextLine();
             try {
                 tempID = Integer.parseInt(input);
                 preveri = true;
@@ -407,6 +406,7 @@ public class TelefonskiImenik {
         try {
             Kontakt kont = new Kontakt();
             FileWriter fw = new FileWriter("./src/main/resources/imenik.csv");
+
             fw.append(kont.prvaVrsticaCSV());
             for (Kontakt kontakt : seznamKontaktov) {
                 fw.append(kontakt.podatkiCSV());
@@ -414,10 +414,124 @@ public class TelefonskiImenik {
             
             fw.flush();
             fw.close();
+
+            System.out.println("Podatki so shranjeni v ./src/main/resources/imenik.csv");
         }
 
         catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void shraniPodatkeVBazo() {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Ime baze, po kateri iščemo: ");
+        String imeSheme = sc.nextLine();
+
+        System.out.print("Uporabnik: ");
+        String usrSheme = sc.nextLine();
+
+        System.out.print("Geslo: ");
+        String pwdSheme = sc.nextLine();
+
+        System.out.print("Id: ");
+        int id = Integer.parseInt(sc.nextLine());
+
+        System.out.print("Ime: ");
+        String ime = sc.nextLine();
+
+        System.out.print("Priimek: ");
+        String priimek = sc.nextLine();
+
+        System.out.print("Naslov: ");
+        String naslov = sc.nextLine();
+
+        System.out.print("Elektronska pošta: ");
+        String elektronskaPosta = sc.nextLine();
+
+        System.out.print("Telefon: ");
+        String telefon = sc.nextLine();
+
+        System.out.print("Mobilni telefon: ");
+        String mobilniTelefon = sc.nextLine();
+
+        System.out.print("Opomba: ");
+        String opomba = sc.nextLine();
+
+        System.out.println();
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+imeSheme+"?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", usrSheme, pwdSheme);
+            Statement statement = con.createStatement();
+            statement.executeUpdate("insert into tabelaKontaktov values ("+id+", '"+ime+"', '"+priimek+"','"+naslov+"','"+elektronskaPosta+"','"+telefon+"','"+mobilniTelefon+"','"+opomba+"')");
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public void preberiPodatkeIzBaze() {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Ime baze: ");
+        String imeSheme = sc.nextLine();
+
+        System.out.print("Uporabnik: ");
+        String usrSheme = sc.nextLine();
+
+        System.out.print("Geslo: ");
+        String pwdSheme = sc.nextLine();
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+imeSheme+"?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", usrSheme, pwdSheme);
+            Statement statement = con.createStatement();
+            ResultSet rs = statement.executeQuery("select * from tabelaKontaktov");
+
+            while (rs.next()) {
+                System.out.println(rs.getInt(1)+" "+rs.getString(2)+" "+rs.getString(3));
+            }
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public void isciPodatkeVBazi() {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Ime baze: ");
+        String imeSheme = sc.nextLine();
+
+        System.out.print("Uporabnik: ");
+        String usrSheme = sc.nextLine();
+
+        System.out.print("Geslo: ");
+        String pwdSheme = sc.nextLine();
+
+        System.out.println("Zaporedje znakov: ");
+        String najdi = sc.nextLine().toLowerCase();
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+imeSheme+"?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", usrSheme, pwdSheme);
+            Statement statement = con.createStatement();
+            ResultSet rs = statement.executeQuery("select id, ime, priimek from tabelaKontaktov where ime like '%"+najdi+"%' or priimek like '%"+najdi+"%'");
+
+            while (rs.next()) {
+                System.out.println(rs.getInt(1)+" "+rs.getString(2)+" "+rs.getString(3));
+            }
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 }
