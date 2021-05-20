@@ -10,12 +10,14 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
+import java.io.BufferedReader;
 import java.io.EOFException;
 import java.sql.*;
 
@@ -533,5 +535,38 @@ public class TelefonskiImenik {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    public void beriIzDatoteke() {
+
+        try {
+			File datoteka = new File("./src/main/resources/imenik.csv");
+			BufferedReader vhod = new BufferedReader(new InputStreamReader(new FileInputStream(datoteka), "UTF-8"));
+			
+			String niz;
+			String[] vrsticaIzDatoteke;
+            vhod.readLine();
+			
+			while ((niz = vhod.readLine()) != null) { 
+                Kontakt k = new Kontakt();
+				vrsticaIzDatoteke = niz.trim().split(";");
+				k.setId(Integer.parseInt(vrsticaIzDatoteke[0]));
+                k.setIme(vrsticaIzDatoteke[1]);
+                k.setPriimek(vrsticaIzDatoteke[2]);
+                k.setNaslov(vrsticaIzDatoteke[3]);
+                k.setElektronskaPosta(vrsticaIzDatoteke[4]);
+                k.setTelefon(vrsticaIzDatoteke[5]);
+                k.setMobilniTelefon(vrsticaIzDatoteke[6]);
+                k.setOpomba(vrsticaIzDatoteke[7]);
+                seznamKontaktov.add(k);
+                System.out.println(k.toString());
+			}
+
+			vhod.close();
+		}
+		catch (Exception e)
+		{
+			System.out.println("Exception -> " + e.getMessage());
+		}
     }
 }

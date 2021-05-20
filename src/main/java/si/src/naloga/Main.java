@@ -59,6 +59,9 @@ public class Main {
                 case "12":
                     telefonskiImenik.isciPodatkeVBazi();
                     break;
+                case "13":
+                    telefonskiImenik.beriIzDatoteke();
+                    break;
                 case "0":
                     System.exit(0);
                     break;
@@ -95,6 +98,7 @@ public class Main {
         System.out.println("10 - Zapiši podatke v bazo");
         System.out.println("11 - Preberi podatke iz baze");
         System.out.println("12 - Išči po imenu ali priimku po bazi");
+        System.out.println("13 - Preberi podatke iz csv datoteke");
         System.out.println("");
         System.out.println("0 - Izhod iz aplikacije");
         System.out.println("----------------------------------");
